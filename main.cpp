@@ -1,6 +1,29 @@
 #include <iostream>
-
+#include <set>
+#include "DenseMatrix.hpp"
+#include "utility/Overloads.hpp"
+#include "CubicSpline.hpp"
 int main() {
-    std::cout << "Hello, World!" << std::endl;
+
+    CubicSpline spline("/home/d-qql/CLionProjects/vichmaty1/resources/Atmosphere_1.csv");
+    for(int i = 80000; i <= 1200000; ++i){
+        if(std::abs(spline.interpolate(i) - 2e-8) < 1e-9) {
+            std::cout << "Heihgt: " << i << std::endl;
+            break;
+        }
+    }
+    io::CSVReader<2> in("/home/d-qql/CLionProjects/vichmaty1/resources/Atmosphere_2.csv");
+    in.read_header(io::ignore_extra_column, "H", "DEN");
+    double height, density;
+    double max_error = 0;
+    double interpolated;
+    double error = 0;
+    while (in.read_row(height, density)) {
+        interpolated = spline.interpolate(height);
+        error = std::abs(density - interpolated) / std::abs(interpolated);
+        if (max_error < error) max_error = error;
+        std::cout<<error<<std::endl;
+    }
+    std::cout << "Max relative error: " << max_error << std::endl;
     return 0;
 }
