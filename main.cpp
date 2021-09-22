@@ -24,9 +24,9 @@ int main() {
     double error = 0;
     while (in.read_row(height, density)) {
         interpolated = spline.interpolate(height);
-        log_interpolated = spline.interpolate(std::log(height));
+        log_interpolated = std::log(spline.interpolate(height));
         error = std::abs(density - interpolated) / std::abs(interpolated);
-        log_error = std::abs(density - log_interpolated) / std::abs(interpolated);
+        log_error = std::abs(log(density) - log_interpolated) / std::abs(log_interpolated);
         if (max_error < error) max_error = error;
         if (log_max_error < log_error) log_max_error = log_error;
         //std::cout<<error<<std::endl;
